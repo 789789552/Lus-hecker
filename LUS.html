@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUS付费</title>
+<style>
+    /* 全局重置 */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
+    
+    body { background: linear-gradient(90deg, #f97316, #eab308);
+ min-height: 100vh; padding: 20px; display: flex; justify-content: center; align-items: center; }
+
+    /* 主卡片 */
+    .card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 28px;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    /* 标题区域 */
+    .header h1 { font-size: 22px; color: #1e293b; margin-bottom: 8px; }
+    .header p { font-size: 14px; color: #64748b; margin-bottom: 20px; }
+
+    /* 进度条容器 */
+    .progress-container { margin: 20px 0; }
+    .progress-text { font-size: 14px; color: #475569; margin-bottom: 8px; }
+    .progress-bar-container {
+        width: 100%;
+        height: 12px;
+        background: #e2e8f0;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        width: 0%; /* 初始宽度 */
+        border-radius: 6px;
+        transition: width 0.2s ease;
+    }
+
+    /* 状态标签 */
+    .status-badge {
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        display: inline-block;
+        margin-top: 12px;
+    }
+
+    /* 按钮样式 */
+    .btn {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 16px;
+        transition: all 0.3s ease;
+    }
+    .btn-primary {
+        background: #3b82f6;
+        color: white;
+    }
+    .btn-primary:hover {
+        background: #2563eb;
+        transform: translateY(-2px);
+    }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <h1>LUS付费</h1>
+        <p>所有功能模块动态加载</p>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-text">功能注入进度：<span id="progressPercent">0%</span></div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressFill"></div>
+        </div>
+    </div>
+
+    <div class="status-badge" id="status" style="background: #fef3c7; color: #d97708;">
+        当前状态：等待注入
+    </div>
+
+    <button class="btn btn-primary" onclick="startInject()"> 开始注入功能</button>
+</div>
+
+<script>
+// 核心逻辑：10秒加载 + 完成后跳转
+function startInject() {
+    const bar = document.getElementById('progressFill');
+    const percentText = document.getElementById('progressPercent');
+    const status = document.getElementById('status');
+
+    // 重置初始状态
+    bar.style.width = '0%';
+    percentText.innerText = '0%';
+    status.innerText = "当前状态：正在注入配置...";
+    status.style.background = "#fef3c7";
+    status.style.color = "#d97708";
+
+    let progress = 0;
+    const totalDuration = 10000; // 10秒
+    const fps = 60;
+    const intervalTime = 1000 / fps;
+    const incrementPerFrame = 100 / (totalDuration / intervalTime);
+
+    const timer = setInterval(() => {
+        progress += incrementPerFrame;
+        if (progress >= 100) progress = 100;
+
+        bar.style.width = progress + '%';
+        percentText.innerText = Math.round(progress) + '%';
+
+        if (progress === 100) {
+            clearInterval(timer);
+            
+            // 停顿2秒后跳转
+            setTimeout(() => {
+                status.innerText = "未检测到游戏，请进入购买客户端方可使用";
+                status.style.background = "#fee2e2";
+                status.style.color = "#581c87";
+                
+                playSuccessSound();
+
+                // 👇 自动跳转网址（可修改）
+                window.location.href = "https://ds.xiaoman.top/links/34752270";
+            }, 2000); // 等待2秒
+        }
+    }, intervalTime);
+}
+
+// 🔔 提示音效
+function playSuccessSound() {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(1800, audioCtx.currentTime);
+    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.2);
+}
+</script>
+
+</body>
+</html>
